@@ -1,20 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>💰 Зарплата | Трекер</title>
 
+<!-- PWA Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Зарплата">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Зарплата">
+<meta name="theme-color" content="#080d14">
+<meta name="description" content="Трекер зарплаты, переработок и авансов">
+
+<!-- Иконки PWA -->
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080d14' stroke='%23334155' stroke-width='4'/><text x='90' y='115' font-size='100' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23080d14' stroke='%23334155' stroke-width='8'/><text x='256' y='320' font-size='280' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
+<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080d14' stroke='%23334155' stroke-width='1'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
+
+<!-- Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Styles -->
+<link rel="stylesheet" href="css/style.css">
+</head>
 <body>
-    <script type="text/javascript" src="script.js"></script>
-    <div id="main">
-        <button class="left"><</button>
-        <div id="scr"></div>
-        <button class="right">></button>
+<div class="app">
+
+  <!-- MAIN PAGE -->
+  <div class="page active" id="page-main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="lbl">Текущая неделя</div>
+        <div class="week" id="main-week-label">—</div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" onclick="App.showPage('stats')" title="Статистика">📊</button>
+        <button class="icon-btn" onclick="App.showPage('history')" title="История">📋</button>
+        <button class="icon-btn" onclick="App.showPage('settings')" title="Настройки">⚙️</button>
+      </div>
     </div>
 
-</body>
+    <div class="carry-badge anim" id="carry-badge" style="display:none"></div>
 
+    <!-- Цель -->
+    <div class="goal-banner" id="goal-banner" style="display:none">
+      <div class="goal-header">
+        <span class="goal-title">🎯 Цель на месяц</span>
+        <span class="goal-progress-text" id="goal-progress-text">0%</span>
+      </div>
+      <div class="goal-bar-bg">
+        <div class="goal-bar-fill" id="goal-bar-fill" style="width:0%"></div>
+      </div>
+      <div class="goal-amounts">
+        <span class="goal-current" id="goal-current">0₴</span>
+        <span class="goal-target" id="goal-target">0₴</span>
+      </div>
+    </div>
+
+    <div class="summary anim">
+      <div class="summary-top">
+        <div>
+          <div class="sum-label">Заработано</div>
+          <div class="big-num"><span id="main-total">0</span><span>₴</span></div>
+        </div>
+        <div id="advance-block" style="text-align:right;display:none">
+          <div class="advance-sub" id="advance-sub-text"></div>
+          <div class="to-receive" id="to-receive-text"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="ms-lbl">Рабочих</div><div class="ms-val" style="color:var(--green)" id="ms-days">0 дн</div></div>
+        <div class="mini-stat"><div class="ms-lbl">Переработка</div><div class="ms-val" style="color:var(--orange)" id="ms-ot">0₴</div></div>
+        <div class="mini-stat"><div class="ms-lbl">Остаток</div><div class="ms-val" style="color:var(--yellow)" id="ms-rem">0г</div></div>
+        <div class="mini-stat" id="ms-ded-block" style="display:none"><div class="ms-lbl">Вычеты</div><div class="ms-val" style="color:var(--red)" id="ms-ded">0₴</div></div>
+      </div>
+    </div>
+
+    <div class="btn-grid">
+      <button class="action-card" onclick="App.addWorkday()">
+        <div class="ac-icon" style="color:var(--green)">✓</div>
+        <div><div class="ac-name">Рабочий день</div><div class="ac-sub">+ставка за смену</div></div>
+      </button>
+      <button class="action-card" onclick="App.addDayOff()">
+        <div class="ac-icon" style="color:var(--muted)">○</div>
+        <div><div class="ac-name">Выходной</div><div class="ac-sub">отдых</div></div>
+      </button>
+      <button class="action-card" onclick="App.openModal('short')">
+        <div class="ac-icon" style="color:var(--yellow)">◑</div>
+        <div><div class="ac-name">Неполный день</div><div class="ac-sub">→ переработка</div></div>
+      </button>
+      <button class="action-card" onclick="App.openModal('overtime')">
+        <div class="ac-icon" style="color:var(--orange)">⊕</div>
+        <div><div class="ac-name">Переработка</div><div class="ac-sub">+часы</div></div>
+      </button>
+      <button class="action-card" onclick="App.openModal('deduction')">
+        <div class="ac-icon" style="color:var(--red)">↓</div>
+        <div><div class="ac-name">Вычет</div><div class="ac-sub">−сумма</div></div>
+      </button>
+      <button class="action-card" onclick="App.openModal('advance')">
+        <div class="ac-icon" style="color:var(--purple)">↑</div>
+        <div><div class="ac-name">Аванс</div><div class="ac-sub">получено</div></div>
+      </button>
+    </div>
+
+    <button class="carry-btn" id="carry-btn" onclick="App.carryOvertime()" style="display:none"></button>
+
+    <div id="recent-block" style="display:none">
+      <div class="section-lbl">Последние записи</div>
+      <div class="entries" id="recent-list"></div>
+      <button class="show-more-btn" onclick="App.showPage('history')">Все записи →</button>
+    </div>
+  </div>
+
+  <!-- HISTORY PAGE -->
+  <div class="page" id="page-history">
+    <div class="hist-topbar">
+      <button class="back-btn" onclick="App.showPage('main')">← Назад</button>
+      <span class="hist-title">История</span>
+      <span style="width:60px"></span>
+    </div>
+    <div class="data-btns">
+      <button class="data-btn export" onclick="App.exportData()">⬇ Экспорт JSON</button>
+      <button class="data-btn import" onclick="document.getElementById('import-input').click()">⬆ Импорт</button>
+      <input type="file" id="import-input" accept=".json" style="display:none" onchange="App.importData(event)">
+    </div>
+    <div class="period-filter">
+      <select id="period-select" onchange="App.renderHistory()">
+        <option value="all">Все время</option>
+        <option value="month">Этот месяц</option>
+        <option value="quarter">Квартал</option>
+        <option value="year">Год</option>
+      </select>
+    </div>
+    <div class="hist-cards" id="hist-cards"></div>
+  </div>
+
+  <!-- STATS PAGE -->
+  <div class="page" id="page-stats">
+    <div class="hist-topbar">
+      <button class="back-btn" onclick="App.showPage('main')">← Назад</button>
+      <span class="hist-title">Статистика</span>
+      <span style="width:60px"></span>
+    </div>
+    <div class="stats-summary" id="stats-summary"></div>
+    <div class="chart-container" id="chart-container">
+      <canvas id="earnings-chart"></canvas>
+    </div>
+    <div class="stats-records" id="stats-records"></div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <div class="hist-topbar">
+      <button class="back-btn" onclick="App.showPage('main')">← Назад</button>
+      <span class="hist-title">Настройки</span>
+      <span style="width:60px"></span>
+    </div>
+    <div class="settings-group">
+      <div class="settings-label">Ставки</div>
+      <div class="setting-row">
+        <span>За смену (₴)</span>
+        <input type="number" id="setting-rate" class="setting-input" value="650" onchange="Config.updateRate()">
+      </div>
+      <div class="setting-row">
+        <span>За переработку 4ч (₴)</span>
+        <input type="number" id="setting-overtime-rate" class="setting-input" value="300" onchange="Config.updateOvertimeRate()">
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-label">Цель на месяц</div>
+      <div class="setting-row">
+        <span>Сумма (₴)</span>
+        <input type="number" id="setting-goal" class="setting-input" value="0" placeholder="0" onchange="Config.updateGoal()">
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-label">Тема</div>
+      <div class="theme-switcher">
+        <button class="theme-btn active" onclick="Config.setTheme('dark')">🌙 Тёмная</button>
+        <button class="theme-btn" onclick="Config.setTheme('light')">☀️ Светлая</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-label">Данные</div>
+      <button class="danger-btn" onclick="App.clearAllData()">🗑 Очистить все данные</button>
+    </div>
+  </div>
+
+  <!-- WEEK DETAIL PAGE -->
+  <div class="page" id="page-week">
+    <div class="hist-topbar">
+      <button class="back-btn" onclick="App.showPage('history')">← Назад</button>
+      <span class="hist-title" id="wd-title">—</span>
+      <span style="width:60px"></span>
+    </div>
+    <div class="carry-badge" id="wd-carry-badge" style="display:none"></div>
+    <button class="edit-week-btn" onclick="App.editWeekDates()">✎ Изменить даты</button>
+    <div class="date-edit-row" id="date-edit-row" style="display:none;">
+      <input type="date" id="edit-date-start">
+      <span style="color:var(--muted);font-size:12px;">—</span>
+      <input type="date" id="edit-date-end">
+      <button onclick="App.saveWeekDates()">✓ Сохранить</button>
+    </div>
+    <div class="wd-summary" id="wd-summary"></div>
+    
+    <!-- Заметка к неделе -->
+    <div class="week-note" id="week-note">
+      <textarea id="week-note-input" placeholder="Заметка к неделе (отпуск, больничный...)" onchange="App.saveWeekNote()"></textarea>
+    </div>
+    
+    <div class="section-lbl">Все записи</div>
+    <div class="entries" id="wd-entries"></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="modal-overlay" onclick="App.closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title" id="modal-title">—</div>
+    <div class="modal-sub" id="modal-sub">—</div>
+    <input type="number" inputmode="decimal" id="modal-input" placeholder="0" onkeydown="if(event.key==='Enter')App.modalConfirm()">
+    <div class="modal-btns">
+      <button class="m-btn m-btn-confirm" onclick="App.modalConfirm()">Добавить</button>
+      <button class="m-btn m-btn-cancel" onclick="App.closeModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="del-overlay" onclick="App.closeDelModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Удалить запись?</div>
+    <div class="modal-sub" id="del-sub" style="color:var(--muted)">—</div>
+    <div class="modal-btns">
+      <button class="m-btn m-btn-danger" onclick="App.confirmDelete()">Удалить</button>
+      <button class="m-btn m-btn-cancel" onclick="App.closeDelModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Scripts -->
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/config.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/goals.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
 </html>
