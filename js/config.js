@@ -9,54 +9,44 @@ const Config = {
     theme: 'dark'
   },
 
-  current: {},
-
   init() {
-    this.current = Storage.load(Storage.KEYS.CONFIG, { ...this.defaults });
+    const saved = Storage.getConfig();
+    this.current = { ...this.defaults, ...saved };
     this.applyTheme();
     this.updateInputs();
   },
 
   get(key) {
-    return this.current[key] || this.defaults[key];
+    return this.current[key] ?? this.defaults[key];
   },
 
   set(key, value) {
     this.current[key] = value;
-    Storage.save(Storage.KEYS.CONFIG, this.current);
+    Storage.setConfig(this.current);
   },
 
   updateRate() {
     const input = document.getElementById('setting-rate');
-    const value = parseInt(input.value) || this.defaults.rate;
-    if (value < 0) {
-      input.value = this.defaults.rate;
-      return;
-    }
+    let value = Math.abs(parseInt(input.value) || this.defaults.rate);
+    input.value = value;
     this.set('rate', value);
-    App.renderMain();
+    App.refreshAll();
     App.showToast(`Ставка: ${value}₴`);
   },
 
   updateOvertimeRate() {
     const input = document.getElementById('setting-overtime-rate');
-    const value = parseInt(input.value) || this.defaults.overtimeRate;
-    if (value < 0) {
-      input.value = this.defaults.overtimeRate;
-      return;
-    }
+    let value = Math.abs(parseInt(input.value) || this.defaults.overtimeRate);
+    input.value = value;
     this.set('overtimeRate', value);
-    App.renderMain();
+    App.refreshAll();
     App.showToast(`Переработка: ${value}₴`);
   },
 
   updateGoal() {
     const input = document.getElementById('setting-goal');
-    const value = parseInt(input.value) || 0;
-    if (value < 0) {
-      input.value = 0;
-      return;
-    }
+    let value = Math.abs(parseInt(input.value) || 0);
+    input.value = value;
     this.set('goal', value);
     Goals.updateDisplay();
     App.showToast(value > 0 ? `Цель: ${value}₴` : 'Цель сброшена');
@@ -68,19 +58,24 @@ const Config = {
     document.querySelectorAll('.theme-btn').forEach(btn => {
       btn.classList.toggle('active', btn.textContent.includes(theme === 'dark' ? 'Тёмная' : 'Светлая'));
     });
+    // Перерисовываем график при смене темы
+    if (document.getElementById('page-stats').classList.contains('active')) {
+      Stats.renderChart();
+    }
   },
 
   applyTheme() {
-    document.documentElement.setAttribute('data-theme', this.get('theme'));
-    document.querySelector('meta[name="theme-color"]').content = 
-      this.get('theme') === 'dark' ? '#080d14' : '#f8fafc';
+    const theme = this.get('theme');
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelector('meta[name="theme-color"]').content =
+      theme === 'dark' ? '#080d14' : '#f8fafc';
   },
 
   updateInputs() {
     const rateInput = document.getElementById('setting-rate');
     const overtimeInput = document.getElementById('setting-overtime-rate');
     const goalInput = document.getElementById('setting-goal');
-    
+
     if (rateInput) rateInput.value = this.get('rate');
     if (overtimeInput) overtimeInput.value = this.get('overtimeRate');
     if (goalInput) goalInput.value = this.get('goal');

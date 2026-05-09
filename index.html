@@ -1,32 +1,47 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>💰 Зарплата | Трекер</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>💰 Зарплата | Трекер</title>
 
-<!-- PWA Meta Tags -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Зарплата">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="Зарплата">
-<meta name="theme-color" content="#080d14">
-<meta name="description" content="Трекер зарплаты, переработок и авансов">
+  <!-- PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Зарплата">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Зарплата">
+  <meta name="theme-color" content="#080d14">
+  <meta name="description" content="Трекер зарплаты, переработок и авансов">
 
-<!-- Иконки PWA -->
-<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080d14' stroke='%23334155' stroke-width='4'/><text x='90' y='115' font-size='100' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23080d14' stroke='%23334155' stroke-width='8'/><text x='256' y='320' font-size='280' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
-<link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080d14' stroke='%23334155' stroke-width='1'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
+  <!-- Иконки PWA -->
+  <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23080d14' stroke='%23334155' stroke-width='4'/><text x='90' y='115' font-size='100' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23080d14' stroke='%23334155' stroke-width='8'/><text x='256' y='320' font-size='280' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080d14' stroke='%23334155' stroke-width='1'/><text x='16' y='22' font-size='18' text-anchor='middle' fill='%234ade80'>💰</text></svg>">
 
-<!-- Manifest -->
-<link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- Styles -->
-<link rel="stylesheet" href="css/style.css">
+  <script>
+    const BASE_PATH = window.location.pathname.replace(/\/[^/]*$/, '');
+    const manifest = {
+      name: "Зарплата Трекер",
+      short_name: "Зарплата",
+      start_url: BASE_PATH + "/",
+      display: "standalone",
+      background_color: "#080d14",
+      theme_color: "#080d14",
+      icons: [{
+        src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" rx="128" fill="#080d14" stroke="#334155" stroke-width="8"/><text x="256" y="320" font-size="280" text-anchor="middle" fill="#4ade80">💰</text></svg>'),
+        sizes: "512x512", type: "image/svg+xml", purpose: "any maskable"
+      }]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = URL.createObjectURL(blob);
+    document.head.appendChild(link);
+  </script>
 </head>
 <body>
 <div class="app">
@@ -47,7 +62,6 @@
 
     <div class="carry-badge anim" id="carry-badge" style="display:none"></div>
 
-    <!-- Цель -->
     <div class="goal-banner" id="goal-banner" style="display:none">
       <div class="goal-header">
         <span class="goal-title">🎯 Цель на месяц</span>
@@ -109,7 +123,7 @@
       </button>
     </div>
 
-    <button class="carry-btn" id="carry-btn" onclick="App.carryOvertime()" style="display:none"></button>
+    <button class="carry-btn" id="carry-btn" onclick="App.carryOvertime()" style="display:none" disabled></button>
 
     <div id="recent-block" style="display:none">
       <div class="section-lbl">Последние записи</div>
@@ -131,7 +145,7 @@
       <input type="file" id="import-input" accept=".json" style="display:none" onchange="App.importData(event)">
     </div>
     <div class="period-filter">
-      <select id="period-select" onchange="App.renderHistory()">
+      <select id="period-select" onchange="UI.renderHistory()">
         <option value="all">Все время</option>
         <option value="month">Этот месяц</option>
         <option value="quarter">Квартал</option>
@@ -166,18 +180,18 @@
       <div class="settings-label">Ставки</div>
       <div class="setting-row">
         <span>За смену (₴)</span>
-        <input type="number" id="setting-rate" class="setting-input" value="650" onchange="Config.updateRate()">
+        <input type="number" id="setting-rate" class="setting-input" min="0" value="650" onchange="Config.updateRate()">
       </div>
       <div class="setting-row">
         <span>За переработку 4ч (₴)</span>
-        <input type="number" id="setting-overtime-rate" class="setting-input" value="300" onchange="Config.updateOvertimeRate()">
+        <input type="number" id="setting-overtime-rate" class="setting-input" min="0" value="300" onchange="Config.updateOvertimeRate()">
       </div>
     </div>
     <div class="settings-group">
       <div class="settings-label">Цель на месяц</div>
       <div class="setting-row">
         <span>Сумма (₴)</span>
-        <input type="number" id="setting-goal" class="setting-input" value="0" placeholder="0" onchange="Config.updateGoal()">
+        <input type="number" id="setting-goal" class="setting-input" min="0" value="0" placeholder="0" onchange="Config.updateGoal()">
       </div>
     </div>
     <div class="settings-group">
@@ -209,12 +223,9 @@
       <button onclick="App.saveWeekDates()">✓ Сохранить</button>
     </div>
     <div class="wd-summary" id="wd-summary"></div>
-    
-    <!-- Заметка к неделе -->
     <div class="week-note" id="week-note">
       <textarea id="week-note-input" placeholder="Заметка к неделе (отпуск, больничный...)" onchange="App.saveWeekNote()"></textarea>
     </div>
-    
     <div class="section-lbl">Все записи</div>
     <div class="entries" id="wd-entries"></div>
   </div>
@@ -225,7 +236,13 @@
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title" id="modal-title">—</div>
     <div class="modal-sub" id="modal-sub">—</div>
-    <input type="number" inputmode="decimal" id="modal-input" placeholder="0" onkeydown="if(event.key==='Enter')App.modalConfirm()">
+    <div class="modal-input-row">
+      <input type="number" inputmode="decimal" id="modal-input" placeholder="0" min="0" onkeydown="if(event.key==='Enter')App.modalConfirm()">
+    </div>
+    <div class="modal-date-row" id="modal-date-row" style="display:none;">
+      <label style="font-size:12px;color:var(--muted);margin-right:8px;">Дата:</label>
+      <input type="date" id="modal-date-input">
+    </div>
     <div class="modal-btns">
       <button class="m-btn m-btn-confirm" onclick="App.modalConfirm()">Добавить</button>
       <button class="m-btn m-btn-cancel" onclick="App.closeModal()">Отмена</button>
@@ -238,7 +255,7 @@
     <div class="modal-title">Удалить запись?</div>
     <div class="modal-sub" id="del-sub" style="color:var(--muted)">—</div>
     <div class="modal-btns">
-      <button class="m-btn m-btn-danger" onclick="App.confirmDelete()">Удалить</button>
+      <button class="m-btn m-btn-danger" id="del-confirm-btn">Удалить</button>
       <button class="m-btn m-btn-cancel" onclick="App.closeDelModal()">Отмена</button>
     </div>
   </div>
@@ -246,20 +263,22 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- Scripts -->
-<script src="js/utils.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/config.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/stats.js"></script>
-<script src="js/goals.js"></script>
-<script src="js/app.js"></script>
-
-<!-- Service Worker -->
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+  const BASE = window.location.pathname.replace(/\/[^/]*$/, '');
+  document.write('<script src="' + BASE + '/js/utils.js"><\/script>');
+  document.write('<script src="' + BASE + '/js/storage.js"><\/script>');
+  document.write('<script src="' + BASE + '/js/config.js"><\/script>');
+  document.write('<script src="' + BASE + '/js/ui.js"><\/script>');
+  document.write('<script src="' + BASE + '/js/stats.js"><\/script>');
+  document.write('<script src="' + BASE + '/js/goals.js"><\/script>');
+  document.write('<script src="' + BASE + '/js/app.js"><\/script>');
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(BASE + '/sw.js', { scope: BASE + '/' })
+      .catch(() => {});
+  }
 </script>
 </body>
 </html>

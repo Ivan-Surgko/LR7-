@@ -1,20 +1,22 @@
 // js/utils.js - Вспомогательные функции
 
 const Utils = {
-  // Форматирование даты
   formatDate(date, format = 'short') {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
-    
+
     if (format === 'short') return `${day}.${month}`;
     if (format === 'full') return `${day}.${month}.${year}`;
     if (format === 'iso') return d.toISOString().split('T')[0];
+    if (format === 'weekday') {
+      const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+      return `${days[d.getDay()]} ${day}.${month}`;
+    }
     return `${day}.${month}`;
   },
 
-  // Получить понедельник недели по ISO
   getMondayOfWeek(wid) {
     const [y, wPart] = wid.split('-W');
     const w = parseInt(wPart);
@@ -27,7 +29,6 @@ const Utils = {
     return monday;
   },
 
-  // Получить ID недели по дате
   getWeekId(date) {
     const d = date ? new Date(date) : new Date();
     const utc = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -38,26 +39,21 @@ const Utils = {
     return utc.getUTCFullYear() + '-W' + String(weekNo).padStart(2, '0');
   },
 
-  // Форматирование числа
   formatMoney(amount) {
     return Math.round(amount).toLocaleString('ru-RU');
   },
 
-  // Дебаунс для оптимизации
-  debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
+  generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
   },
 
-  // Генерация уникального ID
-  generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  parseDate(dateStr) {
+    if (!dateStr) return new Date();
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? new Date() : d;
+  },
+
+  getTodayISO() {
+    return new Date().toISOString().split('T')[0];
   }
 };
